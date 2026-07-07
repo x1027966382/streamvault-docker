@@ -38,6 +38,10 @@ RUN mkdir -p /app/resources
 # 复制 JAR（由 workflow 在构建前下载）
 ADD spirit-0.0.1-SNAPSHOT.jar app.jar
 
+# 复制启动脚本（自动初始化数据库 + 目录结构）
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 28081
 
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar", "--spring.profiles.active=docker"]
+ENTRYPOINT ["/entrypoint.sh"]
