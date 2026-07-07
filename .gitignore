@@ -1,10 +1,6 @@
 # Build artifacts
 spirit-*.jar
 
-# 前端构建产物（需自行放入）
-static/*
-!static/.gitkeep
-
 # OS
 .DS_Store
 Thumbs.db

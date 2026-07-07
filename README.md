@@ -32,38 +32,24 @@ environment:
   - https_proxy=http://192.168.5.9:7890
 ```
 
-## 🏗️ 本地构建（不使用 GHCR）
+## 🏗️ 本地构建
 
 ```bash
-# 1. 下载 JAR（如尚未包含在仓库中）
+# 下载 JAR
 curl -L -o spirit-0.0.1-SNAPSHOT.jar \
   "https://raw.githubusercontent.com/x1027966382/StreamVault/main/backstage/src/main/docker/buildx/spirit-0.0.1-SNAPSHOT.jar"
 
-# 2. 构建镜像
+# 构建镜像
 docker build -t streamvault:latest .
 
-# 3. 运行
+# 运行
 docker run -d -p 28081:28081 --name streamvault streamvault:latest
 ```
 
-## 📁 目录结构
+## 📁 包含内容
 
-```
-streamvault-docker/
-├── Dockerfile
-├── docker-compose.yml
-├── .github/workflows/
-│   └── docker-build.yml    # GHCR 自动构建
-├── db/
-│   └── spirit.db           # SQLite 数据库
-├── script/
-│   └── douyin.py           # 抖音下载脚本
-├── static/                 # 前端静态资源（需自行放入）
-└── spirit-0.0.1-SNAPSHOT.jar  # 后端 JAR
-```
-
-## 📝 注意事项
-
-- `static/` 目录需要从原 StreamVault 项目获取前端构建产物
-- `spirit-0.0.1-SNAPSHOT.jar` 需要从原仓库下载（约60MB）
-- 推送到 `main` 分支后，GitHub Actions 会自动构建并推送到 GHCR
+- Java 8 运行环境
+- Python3 + f2（抖音下载脚本）
+- yt-dlp（视频下载工具）
+- ffmpeg（音视频处理）
+- SQLite 数据库 + 抖音下载脚本

@@ -8,8 +8,8 @@ services:
     ports:
       - "28081:28081"
     volumes:
-      - streamvault-db:/app/db
-      - streamvault-upload:/app/upload
+      - streamvault-db:/home/app/db
+      - streamvault-resources:/app/resources
     environment:
       - TZ=Asia/Shanghai
     # 如需代理访问外网（如下载视频），取消下面注释：
@@ -18,4 +18,4 @@ services:
 
 volumes:
   streamvault-db:
-  streamvault-upload:
+  streamvault-resources:
