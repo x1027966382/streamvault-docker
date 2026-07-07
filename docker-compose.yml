@@ -8,14 +8,14 @@ services:
     ports:
       - "28081:28081"
     volumes:
-      - streamvault-db:/home/app/db
-      - streamvault-resources:/app/resources
+      - streamvault-app:/app
+      - streamvault-tmp:/tmp
     environment:
       - TZ=Asia/Shanghai
-    # 如需代理访问外网（如下载视频），取消下面注释：
+    # 如需代理访问外网（如抖音、YouTube），取消下面注释：
     # http_proxy: http://192.168.5.9:7890
     # https_proxy: http://192.168.5.9:7890
 
 volumes:
-  streamvault-db:
-  streamvault-resources:
+  streamvault-app:
+  streamvault-tmp:
