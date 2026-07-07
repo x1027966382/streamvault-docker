@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-alpine3.9
 
-# 安装 Python3 + ffmpeg + curl（douyin.py 需要）
-RUN apk add --no-cache python3 py3-pip ffmpeg curl \
+# 安装 Python3 + ffmpeg（douyin.py 需要）
+RUN apk add --no-cache python3 py3-pip ffmpeg \
     && ln -sf python3 /usr/bin/python
 
 # 应用目录
@@ -10,9 +10,8 @@ WORKDIR /app
 # 数据卷
 VOLUME ["/tmp", "/app"]
 
-# 从 GitHub 下载 JAR（60MB，不随仓库分发）
-ARG JAR_URL=https://raw.githubusercontent.com/x1027966382/StreamVault/main/backstage/src/main/docker/buildx/spirit-0.0.1-SNAPSHOT.jar
-RUN curl -L -o /app/app.jar "${JAR_URL}"
+# 复制 JAR（由 workflow 在构建前下载）
+COPY spirit-0.0.1-SNAPSHOT.jar app.jar
 
 # 复制前端静态资源 + 数据库 + 脚本
 COPY static/ /home/app/static/
