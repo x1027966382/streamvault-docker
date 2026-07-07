@@ -12,11 +12,14 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositorie
     apk add openjdk8 && \
     apk add ffmpeg && \
     apk add python3 py3-pip py3-virtualenv build-base python3-dev libffi-dev && \
+    # f2 依赖：curl-cffi 需要 libcurl-dev 和 openssl-dev
+    apk add curl-dev openssl-dev && \
     rm -rf /tmp/* /var/cache/apk/*
 
 # 创建 Python 虚拟环境并安装 f2（抖音脚本依赖）
 RUN python3 -m venv /opt/venv && \
     . /opt/venv/bin/activate && \
+    pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir f2
 
 # 下载 yt-dlp（视频下载工具）

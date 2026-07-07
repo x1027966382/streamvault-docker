@@ -14,10 +14,17 @@ fi
 # 2. 创建必要目录
 mkdir -p /app/resources
 mkdir -p /app/log
+mkdir -p /app/cookies
 mkdir -p /tmp
 
 # 3. 确保脚本可执行
 chmod +x /home/app/script/*.py 2>/dev/null || true
+
+# 4. 验证 Python 环境（调试用）
+echo "[init] 验证 Python 环境..."
+/opt/venv/bin/python3 --version 2>&1 || echo "[init] ⚠️ Python 环境异常"
+/opt/venv/bin/python3 -c "import f2; print('[init] f2 版本:', f2.__version__)" 2>&1 || echo "[init] ⚠️ f2 包导入失败"
+/opt/venv/bin/python3 -c "from f2.apps.douyin.handler import DouyinHandler; print('[init] DouyinHandler 导入成功')" 2>&1 || echo "[init] ⚠️ DouyinHandler 导入失败"
 
 echo "[init] 目录结构就绪，启动 StreamVault..."
 
