@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  streamvault:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: streamvault:latest
+    container_name: streamvault
+    restart: unless-stopped
+    ports:
+      - "5999:5999"
+    volumes:
+      # Download storage
+      - ./data/resources/video:/app/resources/video
+      - ./data/resources/cover:/app/resources/cover
+      # Database persistence
+      - ./data/db:/app/db
+      # Temp files
+      - ./data/tmp:/tmp
+    environment:
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5999/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
