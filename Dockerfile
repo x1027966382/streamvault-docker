@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine3.9
+FROM eclipse-temurin:8-jre-alpine
 
 # 安装 Python3 + ffmpeg（douyin.py 需要）
 RUN apk add --no-cache python3 py3-pip ffmpeg \
