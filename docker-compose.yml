@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  streamvault:
+    image: ghcr.io/x1027966382/streamvault:latest
+    container_name: streamvault
+    restart: unless-stopped
+    ports:
+      - "28081:28081"
+    volumes:
+      - streamvault-db:/app/db
+      - streamvault-upload:/app/upload
+    environment:
+      - TZ=Asia/Shanghai
+    # 如需代理访问外网（如下载视频），取消下面注释：
+    # http_proxy: http://192.168.5.9:7890
+    # https_proxy: http://192.168.5.9:7890
+
+volumes:
+  streamvault-db:
+  streamvault-upload:

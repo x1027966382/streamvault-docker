@@ -1,17 +1,8 @@
-# Java
-*.class
-
-# Python
-__pycache__/
-*.py[cod]
-
-# IDE
-.idea/
-.vscode/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
+.git
+.github
+.gitignore
+README.md
+CHANGELOG.md
+LICENSE
+docker-compose.yml
+*.md
