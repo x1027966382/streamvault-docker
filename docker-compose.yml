@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   streamvault:
-    image: ghcr.io/x1027966382/streamvault:latest
+    image: ghcr.io/x1027966382/streamvault-docker:latest
     container_name: streamvault
     restart: unless-stopped
     ports:

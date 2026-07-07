@@ -19,7 +19,7 @@ docker run -d \
   -v /vol1/docker/streamvault/app:/app \
   -v /vol1/docker/streamvault/tmp:/tmp \
   --restart unless-stopped \
-  ghcr.io/x1027966382/streamvault:latest
+  ghcr.io/x1027966382/streamvault-docker:latest
 ```
 
 访问: http://localhost:28081/admin/login
@@ -30,7 +30,7 @@ docker run -d \
 
 | 来源 | 地址 |
 |------|------|
-| GHCR (推荐) | `ghcr.io/x1027966382/streamvault:latest` |
+| GHCR (推荐) | `ghcr.io/x1027966382/streamvault-docker:latest` |
 | Docker Hub (原作者) | `qingfeng2336/stream-vault` |
 
 ## ⚙️ 配置代理（可选）
@@ -46,7 +46,7 @@ docker run -d \
   -e http_proxy=http://192.168.5.9:7890 \
   -e https_proxy=http://192.168.5.9:7890 \
   --restart unless-stopped \
-  ghcr.io/x1027966382/streamvault:latest
+  ghcr.io/x1027966382/streamvault-docker:latest
 ```
 
 ## 📂 目录映射
