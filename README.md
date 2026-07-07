@@ -10,14 +10,14 @@ StreamVault 视频下载平台的独立 Docker 部署镜像。
 
 ```bash
 # 创建数据目录
-mkdir -p /vol1/docker/streamvault/{app,tmp}
+mkdir -p /vol1/1000/docker/streamvault/{app,tmp}
 
 # 启动
 docker run -d \
   --name streamvault \
   -p 28081:28081 \
-  -v /vol1/docker/streamvault/app:/app \
-  -v /vol1/docker/streamvault/tmp:/tmp \
+  -v /vol1/1000/docker/streamvault/app:/app \
+  -v /vol1/1000/docker/streamvault/tmp:/tmp \
   --restart unless-stopped \
   ghcr.io/x1027966382/streamvault-docker:latest
 ```
@@ -41,8 +41,8 @@ docker run -d \
 docker run -d \
   --name streamvault \
   -p 28081:28081 \
-  -v /vol1/docker/streamvault/app:/app \
-  -v /vol1/docker/streamvault/tmp:/tmp \
+  -v /vol1/1000/docker/streamvault/app:/app \
+  -v /vol1/1000/docker/streamvault/tmp:/tmp \
   -e http_proxy=http://192.168.5.9:7890 \
   -e https_proxy=http://192.168.5.9:7890 \
   --restart unless-stopped \
@@ -80,8 +80,8 @@ docker build -t streamvault:latest .
 docker run -d \
   --name streamvault \
   -p 28081:28081 \
-  -v /vol1/docker/streamvault/app:/app \
-  -v /vol1/docker/streamvault/tmp:/tmp \
+  -v /vol1/1000/docker/streamvault/app:/app \
+  -v /vol1/1000/docker/streamvault/tmp:/tmp \
   streamvault:latest
 ```
 
