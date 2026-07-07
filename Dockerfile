@@ -1,7 +1,7 @@
 # =============================================================================
 # StreamVault Docker Package
-# Build: docker build --no-cache -t streamvault:latest .
-# Run:   docker run -d --name streamvault -p 5999:5999 -v ./data:/app/data --restart unless-stopped streamvault:latest
+# Build: docker build -t streamvault:latest .
+# Run:   docker run -d --name streamvault -p 28081:28081 -v ./data:/app/data --restart unless-stopped streamvault:latest
 # =============================================================================
 
 # ----- Stage 1: Builder -----
@@ -44,21 +44,14 @@ RUN mkdir -p /app/resources /app/db /app/script /tmp
 COPY db /app/db/
 COPY script /app/script/
 
-# Download JAR from GitHub releases (built inside Docker, avoids large local transfer)
-ARG JAR_URL=https://github.com/x1027966382/StreamVault/releases/latest/download/spirit-0.0.1-SNAPSHOT.jar
-RUN wget -O /app.jar "${JAR_URL}" 2>/dev/null || \
-    wget -O /app.jar "https://github.com/x1027966382/StreamVault/raw/main/backstage/src/main/docker/buildx/spirit-0.0.1-SNAPSHOT.jar" 2>/dev/null || \
-    { echo "ERROR: Failed to download JAR. Please download manually and place spirit-0.0.1-SNAPSHOT.jar in this directory, then rebuild."; exit 1; }
+# Copy local JAR file (user must place spirit-0.0.1-SNAPSHOT.jar in this directory before building)
+COPY spirit-0.0.1-SNAPSHOT.jar /app.jar
 
-# Expose port
-EXPOSE 5999
+# Expose port (matches original StreamVault default)
+EXPOSE 28081
 
 # Volume mounts for persistence
 VOLUME ["/tmp", "/app"]
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD wget -qO- http://localhost:5999/actuator/health || exit 1
 
 # Start the application
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Xmx1g", "-jar", "/app.jar", "--spring.profiles.active=docker"]

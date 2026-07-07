@@ -9,7 +9,7 @@ services:
     container_name: streamvault
     restart: unless-stopped
     ports:
-      - "5999:5999"
+      - "28081:28081"
     volumes:
       # Download storage
       - ./data/resources/video:/app/resources/video
@@ -20,9 +20,3 @@ services:
       - ./data/tmp:/tmp
     environment:
       - TZ=Asia/Shanghai
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:5999/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
