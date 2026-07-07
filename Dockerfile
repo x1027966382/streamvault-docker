@@ -1,27 +1,3 @@
-# ============================================
-# Stage 1: 在 Debian 上编译 Python 依赖（兼容性好）
-# ============================================
-FROM python:3.11-slim AS builder
-
-WORKDIR /build
-
-# 安装编译依赖
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libffi-dev \
-    python3-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# 创建虚拟环境并安装 f2
-RUN python3 -m venv /opt/venv && \
-    . /opt/venv/bin/activate && \
-    pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir f2
-
-# ============================================
-# Stage 2: Alpine 运行时镜像（含 Java + Python）
-# ============================================
 FROM alpine:3.20
 
 ENV TZ=Asia/Shanghai
@@ -30,28 +6,43 @@ ENV TZ=Asia/Shanghai
 ARG BUILD_VERSION=2025.03.31
 ENV YT_DLP_VERSION=$BUILD_VERSION
 
-# 安装系统依赖
+# 安装所有依赖（包括 f2 编译需要的）
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && \
     apk upgrade --update-cache && \
     apk add --no-cache \
         openjdk8 \
         ffmpeg \
         python3 \
+        py3-pip \
+        py3-virtualenv \
         libffi \
         libssl3 \
         libstdc++ \
         curl \
-        wget && \
+        wget \
+        # f2 编译依赖（pydantic-core, cryptography 等 C 扩展）
+        build-base \
+        python3-dev \
+        libffi-dev \
+        openssl-dev \
+        cargo \
+        rust && \
     rm -rf /tmp/* /var/cache/apk/*
 
-# 从 builder 阶段复制编译好的 Python 虚拟环境
-COPY --from=builder /opt/venv /opt/venv
+# 创建虚拟环境并安装 f2
+RUN python3 -m venv /opt/venv && \
+    . /opt/venv/bin/activate && \
+    pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir f2
 
 # 下载 yt-dlp
 RUN wget -O /usr/local/bin/yt-dlp \
     https://github.com/yt-dlp/yt-dlp/releases/download/${YT_DLP_VERSION}/yt-dlp && \
     chmod a+rx /usr/local/bin/yt-dlp
 ENV YT_DLP_PATH=/usr/local/bin/yt-dlp
+
+# 清理编译工具（减小镜像体积）
+RUN apk del build-base cargo rust python3-dev libffi-dev openssl-dev 2>/dev/null || true
 
 # 数据卷
 VOLUME ["/tmp", "/app"]
