@@ -1,8 +1,11 @@
 .git
 .github
 .gitignore
+LICENSE
 README.md
 CHANGELOG.md
-LICENSE
 docker-compose.yml
+setup.sh
 *.md
+.DS_Store
+Thumbs.db

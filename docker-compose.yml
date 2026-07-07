@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # ===== StreamVault 主服务 =====
   streamvault:
     image: ghcr.io/x1027966382/streamvault-docker:latest
     container_name: streamvault
@@ -8,14 +9,78 @@ services:
     ports:
       - "28081:28081"
     volumes:
-      - streamvault-app:/app
-      - streamvault-tmp:/tmp
+      - ${STREAMVAULT_DIR:-/vol1/1000/docker/streamvault}/app:/app
+      - ${STREAMVAULT_DIR:-/vol1/1000/docker/streamvault}/tmp:/tmp
     environment:
       - TZ=Asia/Shanghai
-    # 如需代理访问外网（如抖音、YouTube），取消下面注释：
-    # http_proxy: http://192.168.5.9:7890
-    # https_proxy: http://192.168.5.9:7890
+      - HTTP_PROXY=${HTTP_PROXY:-}
+      - HTTPS_PROXY=${HTTPS_PROXY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:28081/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - streamvault-net
 
-volumes:
-  streamvault-app:
-  streamvault-tmp:
+  # ===== Aria2 下载后端 =====
+  aria2:
+    image: p3terx/aria2-pro:latest
+    container_name: aria2
+    restart: unless-stopped
+    ports:
+      - "6800:6800"
+      - "6888:6888"
+      - "6888:6888/udp"
+    volumes:
+      - ${STREAMVAULT_DIR:-/vol1/1000/docker/streamvault}/app/downloads:/downloads
+      - ${STREAMVAULT_DIR:-/vol1/1000/docker/streamvault}/aria2:/config
+    environment:
+      - PUID=0
+      - PGID=0
+      - UMASK_SET=022
+      - RPC_SECRET=${ARIA2_RPC_SECRET:-streamvault_secret}
+      - RPC_PORT=6800
+      - LISTEN_PORT=6888
+      - DISK_CACHE=64M
+      - IPV6_MODE=false
+      - UPDATE_TRACKERS=true
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6800/jsonrpc?method=aria2.getVersion"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - streamvault-net
+
+  # ===== Web 管理面板 =====
+  web-panel:
+    build:
+      context: ./web-panel
+      dockerfile: Dockerfile
+    container_name: streamvault-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PANEL_PORT:-28082}:28082"
+    volumes:
+      - ${STREAMVAULT_DIR:-/vol1/1000/docker/streamvault}/app/downloads:/app/downloads
+      - ${STREAMVAULT_DIR:-/vol1/1000/docker/streamvault}/app/log:/app/log
+      - ${STREAMVAULT_DIR:-/vol1/1000/docker/streamvault}/app/config:/app/config
+      - ${STREAMVAULT_DIR:-/vol1/1000/docker/streamvault}/app/scripts:/app/scripts
+    environment:
+      - TZ=Asia/Shanghai
+      - DOWNLOAD_DIR=/app/downloads
+      - LOG_DIR=/app/log
+      - CONFIG_DIR=/app/config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:28082/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - streamvault-net
+
+networks:
+  streamvault-net:
+    driver: bridge
